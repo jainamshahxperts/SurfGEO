@@ -1,0 +1,138 @@
+{
+  "shareholding_distribution": [
+    {
+      "name": "HubSpot",
+      "mention_count": 1088,
+      "percentage": 25.53,
+      "rank": 1
+    },
+    {
+      "name": "G2.com",
+      "mention_count": 741,
+      "percentage": 17.39,
+      "rank": 2
+    },
+    {
+      "name": "Search Engine Land",
+      "mention_count": 590,
+      "percentage": 13.85,
+      "rank": 3
+    },
+    {
+      "name": "SEMrush",
+      "mention_count": 437,
+      "percentage": 10.26,
+      "rank": 4
+    },
+    {
+      "name": "Search Engine Journal",
+      "mention_count": 345,
+      "percentage": 8.1,
+      "rank": 5
+    },
+    {
+      "name": "Ramp",
+      "mention_count": 150,
+      "percentage": 3.52,
+      "rank": 6
+    },
+    {
+      "name": "Klipfolio",
+      "mention_count": 146,
+      "percentage": 3.43,
+      "rank": 7
+    },
+    {
+      "name": "Marketing AI Institute",
+      "mention_count": 110,
+      "percentage": 2.58,
+      "rank": 8
+    },
+    {
+      "name": "Forbes",
+      "mention_count": 110,
+      "percentage": 2.58,
+      "rank": 9
+    },
+    {
+      "name": "Neil Patel",
+      "mention_count": 105,
+      "percentage": 2.46,
+      "rank": 10
+    },
+    {
+      "name": "Moz",
+      "mention_count": 105,
+      "percentage": 2.46,
+      "rank": 11
+    },
+    {
+      "name": "Forrester",
+      "mention_count": 89,
+      "percentage": 2.09,
+      "rank": 12
+    },
+    {
+      "name": "MarketingProfs",
+      "mention_count": 88,
+      "percentage": 2.07,
+      "rank": 13
+    },
+    {
+      "name": "MarTech Today",
+      "mention_count": 85,
+      "percentage": 1.99,
+      "rank": 14
+    },
+    {
+      "name": "Ahrefs",
+      "mention_count": 72,
+      "percentage": 1.69,
+      "rank": 15
+    },
+    {
+      "name": "Upwork",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 16
+    },
+    {
+      "name": "Clutch.co",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 17
+    },
+    {
+      "name": "IAAP",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 18
+    },
+    {
+      "name": "Yelp",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 19
+    },
+    {
+      "name": "Voicebot.ai",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 20
+    },
+    {
+      "name": "Gartner",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 21
+    },
+    {
+      "name": "Wikipedia",
+      "mention_count": 0,
+      "percentage": 0.0,
+      "rank": 22
+    }
+  ],
+  "total_mentions": 4261,
+  "unique_companies": 22
+}

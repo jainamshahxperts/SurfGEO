@@ -1,0 +1,104 @@
+{
+    "score_percentage": 64.7,
+    "industry_avg_percentage": 85.38990825688073,
+    "visibility_grade": "C",
+    "detailed": {
+        "Content_Quality_And_Depth": {
+            "score": 72,
+            "industry_avg": 95,
+            "variation": -31.94
+        },
+        "Trustworthiness_And_Credibility": {
+            "score": 70,
+            "industry_avg": 85,
+            "variation": -21.43
+        },
+        "Content_Relevance": {
+            "score": 93,
+            "industry_avg": 85,
+            "variation": 8.6
+        },
+        "Citations_And_Mentions_In_Trusted_Sources": {
+            "score": 65,
+            "industry_avg": 95,
+            "variation": -46.15
+        },
+        "Topical_Authority_And_Expertise": {
+            "score": 85,
+            "industry_avg": 85,
+            "variation": 0.0
+        },
+        "Search_Engine_Rankings_Bing_Google": {
+            "score": 35,
+            "industry_avg": 85,
+            "variation": -142.86
+        },
+        "Verifiable_Performance_Metrics": {
+            "score": 55,
+            "industry_avg": 80,
+            "variation": -45.45
+        },
+        "Sentiment_Analysis": {
+            "score": 78,
+            "industry_avg": 85,
+            "variation": -8.97
+        },
+        "Data_Frequency_And_Consistency": {
+            "score": 68,
+            "industry_avg": 80,
+            "variation": -17.65
+        },
+        "Social_Proof_And_Reviews": {
+            "score": 58,
+            "industry_avg": 85,
+            "variation": -46.55
+        },
+        "Structured_Data_Schema_Markup": {
+            "score": 40,
+            "industry_avg": 80,
+            "variation": -100.0
+        },
+        "Content_Freshness_And_Timeliness": {
+            "score": 82,
+            "industry_avg": 80,
+            "variation": 2.44
+        },
+        "Technical_Performance_Speed_Mobile": {
+            "score": 70,
+            "industry_avg": 85,
+            "variation": -21.43
+        },
+        "Localization": {
+            "score": 30,
+            "industry_avg": 85,
+            "variation": -183.33
+        },
+        "Social_Signals": {
+            "score": 45,
+            "industry_avg": 85,
+            "variation": -88.89
+        }
+    },
+    "model_scores": {
+        "gpt": {
+            "score_percentage": 65.0,
+            "industry_avg_percentage": 85.26,
+            "visibility_grade": "B"
+        },
+        "perplexity": {
+            "score_percentage": 64.69,
+            "industry_avg_percentage": 85.43,
+            "visibility_grade": "C"
+        },
+        "claude": {
+            "score_percentage": 64.66,
+            "industry_avg_percentage": 85.18,
+            "visibility_grade": "C"
+        },
+        "gemini": {
+            "score_percentage": 63.95,
+            "industry_avg_percentage": 85.75,
+            "visibility_grade": "C"
+        }
+    }
+}
