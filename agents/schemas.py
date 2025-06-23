@@ -82,6 +82,14 @@ def reduce_error(existing: Optional[str], new: Optional[str]) -> Optional[str]:
     """Keep the existing error if it exists, otherwise use the new value."""
     return existing or new     
 
+def reduce_website_content_individual(existing: Optional[str], new: Optional[str]) -> Optional[str]:
+    """Keep the existing website_content_individual if it exists, otherwise use the new value."""
+    return existing or new
+
+def reduce_compatibility_report(existing: Optional[dict], new: Optional[dict]) -> Optional[dict]:
+    """Keep the existing compatibility_report if it exists, otherwise use the new value."""
+    return existing or new     
+
 class PeriodicTable(BaseModel):
     Content_Quality_And_Depth: int
     Trustworthiness_And_Credibility: int
@@ -111,6 +119,8 @@ class ResearchState(TypedDict, total=False):
     # Core fields
     company_name: Annotated[str, reduce_company_name]
     website_content: Annotated[Optional[str], reduce_website_content]
+    website_content_individual: Annotated[Optional[dict], reduce_website_content]
+    compatibility_report: Annotated[Optional[dict], reduce_compatibility_report]
     brand_guidelines: Annotated[Optional[BrandGuideline], reduce_brand_guidelines]
     periodic_table_report: Annotated[Optional[dict], reduce_periodic_table]
     seo_keywords: Annotated[Optional[List[str]], reduce_seo_keywords]
@@ -132,6 +142,7 @@ class ResearchStateModel(BaseModel):
     """Pydantic model for ResearchState (for validation)."""
     company_name: Annotated[str, "company_name"]
     website_content: Optional[str] = None
+    website_content_individual: Optional[dict] = None
     brand_guidelines: Optional[BrandGuideline] = None
     periodic_table_report: Optional[dict] = None
     seo_keywords: Optional[List[str]] = None
@@ -147,6 +158,7 @@ class ResearchStateModel(BaseModel):
     goals: Annotated[Optional[List[str]], "goals"] = None
     usp: Annotated[Optional[List[str]], "usp"] = None
     error: Annotated[Optional[str], "error"] = None
+    compatibility_report: Optional[dict] = None
     
     class Config:
         arbitrary_types_allowed = True

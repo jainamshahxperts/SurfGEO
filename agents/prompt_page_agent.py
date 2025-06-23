@@ -89,6 +89,7 @@ CONSTRAINTS:
 - Use numerical values where specified
 - No explanatory text or comments
 - Ensure accuracy in competitor identification
+- strictly no field should be ranked as "None" 
 """
 
         response = self._call_llm(prompt)

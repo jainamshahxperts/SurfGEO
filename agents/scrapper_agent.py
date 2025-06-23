@@ -150,7 +150,11 @@ class ScraperAgent:
                 company_url = "https://" + company_url
 
             pages = self.scrape_site(company_url, max_pages=100, max_workers=20)
-
+            os.makedirs("output", exist_ok=True)
+            with open("output/pages_with_content.json", "w", encoding="utf-8") as f:
+                json.dump(pages, f, indent=2, ensure_ascii=False)
+            print(f"📝 Saved detailed per-page content to output/pages_with_content.json")
+            state["website_content_individual"] = pages
             compiled = {
                 "website_url": company_url,
                 "total_pages_scraped": len(pages),

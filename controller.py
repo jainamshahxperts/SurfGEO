@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 # Import agents
 from agents.scrapper_agent import ScraperAgent
 from agents.periodic_table_agent import PeriodicTableAgent
+from agents.compatibility_agent import CompatibilityAgent
 from agents.brand_identity_agent import brand_identity_agent
 from agents.keyword_intelligence_agent import KeywordResearchAgent, KeywordResearchConfig
 from agents.prompt_page_agent import SEOpromptAgent, SEOpromptAgentConfig
@@ -29,6 +30,7 @@ class ResearchController:
             # Initialize all agents
             self.scrapper_agent = ScraperAgent()
             self.periodic_table_agent = PeriodicTableAgent()
+            self.compatibility_agent = CompatibilityAgent()
             
             # brand_identity_agent is a function, not a class - we'll use it directly
             self.brand_identity_agent = brand_identity_agent
@@ -61,6 +63,7 @@ class ResearchController:
         try:
             # Add all nodes to the workflow
             self.workflow.add_node("scrape_website", self.scrapper_agent.scrape_website)
+            self.workflow.add_node("compatibility_analysis", self.compatibility_agent.score_pages_in_json)
             self.workflow.add_node("brand_identity", self.brand_identity_agent)
             self.workflow.add_node("periodic_table_analysis", self.periodic_table_agent.analyze)
             self.workflow.add_node("keyword_research", self.keyword_intelligence_agent.run_research_node)
@@ -72,8 +75,12 @@ class ResearchController:
             # Define the workflow edges
             self.workflow.set_entry_point("scrape_website")
             
+            # Add edge for compatibility analysis after scraping
+            self.workflow.add_edge("scrape_website", "compatibility_analysis")
+            
             # First parallel branch: brand identity and keyword research
-            self.workflow.add_edge("scrape_website", "brand_identity")
+            # First parallel branch: brand identity and keyword research
+            self.workflow.add_edge("compatibility_analysis", "brand_identity")
             self.workflow.add_edge("brand_identity", "keyword_research")
             
             # Second parallel branch: periodic table analysis
@@ -134,7 +141,8 @@ def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
             'goals': None,
             'usp': None,
             'error': None,
-            'website_content': None
+            'website_content': None,
+            'compatibility_report': None
         }
         
         # Validate the initial state against the Pydantic model
