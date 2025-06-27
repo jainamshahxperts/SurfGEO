@@ -41,6 +41,7 @@ class BrandAnalyticsAgent:
         company_name = state.get("company_name", "")
         visibility_data = state.get("visibility_report", {})
         ranking_data = state.get("ranking_analysis_output", {})
+        similar_web_data = state.get("similar_web_data", {})
 
         prompt = f"""
 You are a competitive brand intelligence analyst.
@@ -50,6 +51,8 @@ I am providing two data sources:
 {json.dumps(visibility_data, indent=2)}
 2. ranking_analysis.json - list of 60 top competitor prompts with their respective visibility, mentions, and rankings.
 {json.dumps(ranking_data, indent=2)}
+3. similar_web_data.json - Similar web data for the company
+{json.dumps(similar_web_data, indent=2)}
 
 Please analyze both and infer realistic, data-informed estimates of the following metrics for the company **{company_name}**:
 
@@ -61,6 +64,10 @@ Please analyze both and infer realistic, data-informed estimates of the followin
 
 Respond only in valid JSON format like:
 {{
+  "top_countries":[{{
+    "country": "United States",
+    "share": "30.5%"
+  }}...(add 5 countries if possible)],
   "brand_mention_count": 1200,
   "traffic_estimate": "5000/month",
   "visibility_score": 76.4,

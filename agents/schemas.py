@@ -1,12 +1,14 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List, Annotated
+from typing import Optional, List, Annotated,Dict
 from typing_extensions import TypedDict
 
 def reduce_company_name(existing: Optional[str], new: Optional[str]) -> Optional[str]:
     """Keep the existing company_name if it exists, otherwise use the new value."""
     return existing or new
 
-def reduce_website_content(existing: Optional[str], new: Optional[str]) -> Optional[str]:
+from typing import Dict
+
+def reduce_website_content(existing: Optional[Dict], new: Optional[Dict]) -> Optional[Dict]:
     """Keep the existing website_content if it exists, otherwise use the new value."""
     return existing or new
 
@@ -59,8 +61,12 @@ def reduce_usp(existing: Optional[str], new: Optional[str]) -> Optional[str]:
     return existing or new     
 
 def reduce_error(existing: Optional[str], new: Optional[str]) -> Optional[str]:
-    """Keep the existing error if it exists, otherwise use the new value."""
-    return existing or new     
+    """Prioritize the new error if it exists, otherwise keep the existing value."""
+    return new or existing     
+
+def reduce_similar_web_data(existing: Optional[dict], new: Optional[dict]) -> Optional[dict]:
+    """Keep the existing similar_web_data if it exists, otherwise use the new value."""
+    return existing or new
 
 def reduce_niche(existing: Optional[str], new: Optional[str]) -> Optional[str]:
     """Keep the existing niche if it exists, otherwise use the new value."""
@@ -88,6 +94,14 @@ def reduce_website_content_individual(existing: Optional[str], new: Optional[str
 
 def reduce_compatibility_report(existing: Optional[dict], new: Optional[dict]) -> Optional[dict]:
     """Keep the existing compatibility_report if it exists, otherwise use the new value."""
+    return existing or new     
+
+def reduce_audit_report(existing: Optional[dict], new: Optional[dict]) -> Optional[dict]:
+    """Keep the existing audit_report if it exists, otherwise use the new value."""
+    return existing or new     
+
+def reduce_scraped_summary(existing: Optional[str], new: Optional[str]) -> Optional[str]:
+    """Keep the existing scrapped_summary if it exists, otherwise use the new value."""
     return existing or new     
 
 class PeriodicTable(BaseModel):
@@ -118,7 +132,8 @@ class ResearchState(TypedDict, total=False):
     """State for the research workflow."""
     # Core fields
     company_name: Annotated[str, reduce_company_name]
-    website_content: Annotated[Optional[str], reduce_website_content]
+    scraped_summary: Annotated[Optional[str], reduce_scraped_summary]
+    website_content: Annotated[Optional[Dict], reduce_website_content]
     website_content_individual: Annotated[Optional[dict], reduce_website_content]
     compatibility_report: Annotated[Optional[dict], reduce_compatibility_report]
     brand_guidelines: Annotated[Optional[BrandGuideline], reduce_brand_guidelines]
@@ -129,6 +144,8 @@ class ResearchState(TypedDict, total=False):
     ranking_analysis_output: Annotated[Optional[dict], reduce_ranking_analysis_output]
     visibility_report: Annotated[Optional[dict], reduce_visibility_report]
     brand_metrics: Annotated[Optional[dict], reduce_brand_metrics]
+    similar_web_data: Annotated[Optional[dict], reduce_similar_web_data]
+    audit_report: Annotated[Optional[dict], reduce_audit_report]
     
     # Additional fields used in the workflow
     niche: Annotated[Optional[str], reduce_niche]
@@ -141,7 +158,8 @@ class ResearchState(TypedDict, total=False):
 class ResearchStateModel(BaseModel):
     """Pydantic model for ResearchState (for validation)."""
     company_name: Annotated[str, "company_name"]
-    website_content: Optional[str] = None
+    scraped_summary: Annotated[Optional[str], "scraped_summary"] = None
+    website_content: Optional[Dict] = None
     website_content_individual: Optional[dict] = None
     brand_guidelines: Optional[BrandGuideline] = None
     periodic_table_report: Optional[dict] = None
@@ -151,6 +169,7 @@ class ResearchStateModel(BaseModel):
     ranking_analysis_output: Optional[dict] = None
     visibility_report: Optional[dict] = None
     brand_metrics: Optional[dict] = None
+    similar_web_data: Optional[dict] = None
     
     # Additional fields used in the workflow
     niche: Annotated[Optional[str], "niche"] = None
@@ -159,6 +178,7 @@ class ResearchStateModel(BaseModel):
     usp: Annotated[Optional[List[str]], "usp"] = None
     error: Annotated[Optional[str], "error"] = None
     compatibility_report: Optional[dict] = None
+    audit_report: Optional[dict] = None
     
     class Config:
         arbitrary_types_allowed = True

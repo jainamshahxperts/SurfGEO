@@ -70,8 +70,10 @@ def brand_identity_agent(state: ResearchState) -> ResearchState:
 
     **Required JSON Output Format:**
     {{
+    "name": "Company Name",
     "niche":..,
     "industry": ..,
+    "description": ..,
     "goals": [
         "Specific goal identified from content analysis",
         "Another distinct objective with timeline if mentioned",

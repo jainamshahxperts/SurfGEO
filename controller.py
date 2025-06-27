@@ -18,6 +18,8 @@ from agents.prompt_page_agent import SEOpromptAgent, SEOpromptAgentConfig
 from agents.visibility_agent import AEOEvaluatorAgent, AEO_WEIGHTS
 from agents.industry_agent import IndustryAgent
 from agents.BrandAnalytics_agent import BrandAnalyticsAgent
+from agents.similar_web_analysis import SimilarWebTrafficAgent
+from agents.audit_agent import AuditAgent, run_audit_node
 from agents.schemas import ResearchState
 
 
@@ -46,7 +48,9 @@ class ResearchController:
             # Initialize remaining agents
             self.visibility_agent = AEOEvaluatorAgent(weights=AEO_WEIGHTS)
             self.industry_agent = IndustryAgent()
+            self.similar_web_agent = SimilarWebTrafficAgent()
             self.brand_analytics_agent = BrandAnalyticsAgent()
+            self.audit_agent = AuditAgent()
 
             # Initialize workflow with proper state structure
             self.workflow = StateGraph(ResearchState)
@@ -54,33 +58,74 @@ class ResearchController:
             # Set up the workflow nodes and edges
             self._setup_workflow()
             
+            logger.info("ResearchController initialized.")
         except Exception as e:
-            logger.error(f"Failed to initialize ResearchController: {str(e)}")
+            logger.error(f"Error initializing ResearchController: {e}")
             raise
-            
+
+    def run_similar_web_analysis_node(self, state: ResearchState) -> ResearchState:
+        logger.info(f"--- Initiating SimilarWeb Analysis Node for URL: {state['company_name']} ---")
+        try:
+            # Assuming company_name can be used as a URL/domain for similarweb
+            if not state['company_name']:
+                state['error'] = "Company name not found in state for SimilarWeb analysis."
+                logger.warning("SimilarWeb Analysis Node: Company name not found.")
+                return state
+
+            state = self.similar_web_agent.analyze(state)
+            return state
+        except Exception as e:
+            logger.error(f"Error in SimilarWeb Analysis Node: {e}")
+            state['error'] = f"Error in SimilarWeb Analysis Node: {e}"
+            return state
+
+    async def run_scrape_website_node(self, state: ResearchState) -> ResearchState:
+        logger.info(f"--- Initiating Scrape Website Node for URL: {state['company_name']} ---")
+        try:
+            # Assuming company_name is the URL to scrape
+            if not state['company_name']:
+                state['error'] = "Company name not found in state for scraping."
+                logger.warning("Scrape Website Node: Company name not found.")
+                return state
+
+            state = await self.scrapper_agent.scrape_website(state)
+            if state.get('website_content'):
+                logger.info("Scrape Website Node completed successfully.")
+            else:
+                state['error'] = state.get('error', "Scraping failed or returned no data.")
+                logger.warning("Scrape Website Node completed with no data.")
+            return state
+        except Exception as e:
+            logger.error(f"Error in Scrape Website Node: {e}")
+            state['error'] = f"Error in Scrape Website Node: {e}"
+            return state
+
     def _setup_workflow(self):
         """Set up the workflow nodes and edges."""
         try:
             # Add all nodes to the workflow
-            self.workflow.add_node("scrape_website", self.scrapper_agent.scrape_website)
+            self.workflow.add_node("scrape_website", self.run_scrape_website_node)
             self.workflow.add_node("compatibility_analysis", self.compatibility_agent.score_pages_in_json)
             self.workflow.add_node("brand_identity", self.brand_identity_agent)
             self.workflow.add_node("periodic_table_analysis", self.periodic_table_agent.analyze)
             self.workflow.add_node("keyword_research", self.keyword_intelligence_agent.run_research_node)
             self.workflow.add_node("prompt_page_analysis", self.prompt_page_agent.run_prompt_node)
             self.workflow.add_node("industry_analysis", self.industry_agent.run_industry_analysis)
+            self.workflow.add_node("similar_web_analysis", self.run_similar_web_analysis_node)
             self.workflow.add_node("visibility_analysis", self.visibility_agent.run_visibility_node)
             self.workflow.add_node("brand_analytics", self.brand_analytics_agent.run_brand_analytics_node)
+            self.workflow.add_node("audit_analysis", run_audit_node)
             
             # Define the workflow edges
             self.workflow.set_entry_point("scrape_website")
             
             # Add edge for compatibility analysis after scraping
+            self.workflow.add_edge("scrape_website", "audit_analysis")
             self.workflow.add_edge("scrape_website", "compatibility_analysis")
             
             # First parallel branch: brand identity and keyword research
             # First parallel branch: brand identity and keyword research
-            self.workflow.add_edge("compatibility_analysis", "brand_identity")
+            self.workflow.add_edge("scrape_website", "brand_identity")
             self.workflow.add_edge("brand_identity", "keyword_research")
             
             # Second parallel branch: periodic table analysis
@@ -89,13 +134,16 @@ class ResearchController:
             # Continue the workflow
             self.workflow.add_edge("keyword_research", "prompt_page_analysis")
             self.workflow.add_edge("prompt_page_analysis", "industry_analysis")
-            self.workflow.add_edge("industry_analysis", "visibility_analysis")
+            self.workflow.add_edge("industry_analysis", "similar_web_analysis")
+            self.workflow.add_edge("periodic_table_analysis", "visibility_analysis")
+            # self.workflow.add_edge("visibility_analysis", "similar_web_analysis")
             
             # Brand analytics should run only after both visibility_analysis and periodic_table_analysis complete
             # First, create a conditional edge from periodic_table_analysis to brand_analytics
             # Then ensure visibility_analysis also points to brand_analytics
             self.workflow.add_edge("visibility_analysis", "brand_analytics")
-            self.workflow.add_edge("periodic_table_analysis", "brand_analytics")
+            self.workflow.add_edge("industry_analysis", "brand_analytics")
+            self.workflow.add_edge("similar_web_analysis", "brand_analytics")
             
             # Set the final node
             self.workflow.set_finish_point("brand_analytics")
@@ -106,7 +154,7 @@ class ResearchController:
             logger.error(f"Failed to set up workflow: {str(e)}")
             raise
 
-def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
+async def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
     """
     Run the complete research workflow for a given company.
     
@@ -128,6 +176,7 @@ def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
         # Initialize the state as a dictionary with all required keys
         initial_state: ResearchState = {
             'company_name': company_name,
+            'scraped_summary': None,
             'brand_guidelines': None,
             'periodic_table_report': None,
             'seo_keywords': None,
@@ -136,13 +185,15 @@ def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
             'ranking_analysis_output': None,
             'visibility_report': None,
             'brand_metrics': None,
+            'similar_web_data': None,
             'niche': None,
             'industry': None,
             'goals': None,
             'usp': None,
             'error': None,
             'website_content': None,
-            'compatibility_report': None
+            'compatibility_report': None,
+            'audit_report': None
         }
         
         # Validate the initial state against the Pydantic model
@@ -159,7 +210,7 @@ def run_workflow(company_name: str = "example.com") -> Dict[str, Any]:
         
         # Run the workflow
         logger.info("Executing workflow...")
-        final_state = app.invoke(initial_state)
+        final_state = await app.ainvoke(initial_state)
         
         # Save results
         os.makedirs("output", exist_ok=True)

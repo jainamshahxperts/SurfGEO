@@ -73,11 +73,8 @@ Then, do three things:
 
 1. Content: Clarity, coherence, value across site  
 2. Structure: Use of headings, hierarchy, layout consistency  
-3. Keywords: Presence and spread of relevant search terms  
-4. Entity Coverage: Named entities, topical concepts  
-5. Embedding Richness: Semantic density and representation potential  
-6. Anchor Usage: Internal linking, external linking, anchor text  
-7. Metadata Readiness: Page titles, meta descriptions, alt tags
+3. Keywords: Presence and spread of relevant search terms 
+4. Metadata: Page titles, meta descriptions, alt tags
 
 ### Return JSON like:
 
@@ -86,10 +83,7 @@ Then, do three things:
     "content": {{ "rating": "Average", "comment": "..." }},
     "structure": {{ "rating": "Poor", "comment": "..." }},
     "keywords": {{ "rating": "Excellent", "comment": "..." }},
-    "entity_coverage": {{ "rating": "Average", "comment": "..." }},
-    "embedding_richness": {{ "rating": "Poor", "comment": "..." }},
-    "anchor_usage": {{ "rating": "Average", "comment": "..." }},
-    "metadata_readiness": {{ "rating": "Excellent", "comment": "..." }}
+    "metadata": {{ "rating": "Excellent", "comment": "..." }}
   }},
   "geo_compatibility_percent": ...,
   "opportunity_pages": [
@@ -110,6 +104,9 @@ Then, do three things:
             compatibility_report = json.loads(response.text)
             state['compatibility_report'] = compatibility_report
             logger.info("Compatibility analysis completed successfully.")
+            with open("output/compatibility_score.json","w") as f:
+                json.dump(compatibility_report,f,indent=4)
+            print("compatibility report generated!!")
             return state
         except json.JSONDecodeError as e:
             logger.error(f"❌ JSON Decode Error in compatibility_agent: {e}")
